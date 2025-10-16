@@ -40,3 +40,21 @@ class CategoryListView(generics.ListCreateAPIView):
 def product_list_view(request):
     products = Product.objects.all()
     return render(request, "products/product_list.html", {"products": products})
+
+
+# 🔍 Product Detail View
+def product_detail_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, "products/product_detail.html", {"product": product})
+
+
+# 🧭 Category Filter View
+def category_filter_view(request, category_name):
+    category = get_object_or_404(Category, name=category_name)
+    products = Product.objects.filter(category=category)
+    categories = Category.objects.all()
+    return render(
+        request,
+        "products/category_filter.html",
+        {"category": category, "products": products, "categories": categories}
+    )

@@ -3,6 +3,16 @@
 
 {% block content %}
 <h2 class="mb-4">Available Products</h2>
+<h2 class="mb-4">All Products</h2>
+
+<div class="mb-4">
+    <h5>Filter by Category:</h5>
+    {% for category in categories %}
+        <a href="{% url 'category-filter' category.name %}" class="btn btn-outline-primary btn-sm me-2 mb-2">
+            {{ category.name }}
+        </a>
+    {% endfor %}
+</div>
 
 <div class="row">
     {% for product in products %}
