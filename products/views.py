@@ -3,6 +3,7 @@ from rest_framework import generics, permissions, filters
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
 from .permissions import IsAdminOrReadOnly
+from django.shortcuts import render
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
@@ -35,3 +36,7 @@ class CategoryListView(generics.ListCreateAPIView):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
     permission_classes = [IsAdminOrReadOnly]
+
+def product_list_view(request):
+    products = Product.objects.all()
+    return render(request, "products/product_list.html", {"products": products})
