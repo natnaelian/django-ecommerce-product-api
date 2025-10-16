@@ -1,5 +1,6 @@
 from django.db import models
-from users.models import User
+from django.conf import settings
+
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
@@ -13,7 +14,7 @@ class Product(models.Model):
         related_name="products"
     )
     created_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,  # ✅ avoids direct import
         on_delete=models.CASCADE,
         related_name="products"
     )
