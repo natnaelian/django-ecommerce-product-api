@@ -22,4 +22,14 @@
         <p>No products available yet.</p>
     {% endfor %}
 </div>
+<div class="card-body">
+    <h5 class="card-title">
+        <a href="{% url 'product-detail' product.pk %}" class="text-decoration-none text-dark">
+            {{ product.name }}
+        </a>
+    </h5>
+    <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+    <p class="fw-bold text-success">${{ product.price }}</p>
+</div>
+
 {% endblock %}
