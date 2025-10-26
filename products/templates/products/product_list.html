@@ -1,45 +1,18 @@
-{% extends "products/base.html" %}
-{% block title %}Product List{% endblock %}
-
-{% block content %}
-<h2 class="mb-4">Available Products</h2>
-<h2 class="mb-4">All Products</h2>
-
-<div class="mb-4">
-    <h5>Filter by Category:</h5>
-    {% for category in categories %}
-        <a href="{% url 'category-filter' category.name %}" class="btn btn-outline-primary btn-sm me-2 mb-2">
-            {{ category.name }}
-        </a>
-    {% endfor %}
-</div>
-
-<div class="row">
-    {% for product in products %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-                {% if product.image %}
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text">{{ product.description|truncatewords:15 }}</p>
-                    <p class="fw-bold text-success">${{ product.price }}</p>
-                </div>
-            </div>
-        </div>
-    {% empty %}
-        <p>No products available yet.</p>
-    {% endfor %}
-</div>
-<div class="card-body">
-    <h5 class="card-title">
-        <a href="{% url 'product-detail' product.pk %}" class="text-decoration-none text-dark">
-            {{ product.name }}
-        </a>
-    </h5>
-    <p class="card-text">{{ product.description|truncatewords:15 }}</p>
-    <p class="fw-bold text-success">${{ product.price }}</p>
-</div>
-
-{% endblock %}
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>Products</title></head>
+  <body>
+    <h1>Products</h1>
+    <ul>
+      {% for p in products %}
+        <li>
+          <a href="{% url 'product-detail-html' p.id %}">{{ p.name }}</a>
+          — {{ p.price }} — {{ p.category }}
+          {% if p.image %}<br><img src="{{ p.image.url }}" alt="{{ p.name }}" width="160">{% endif %}
+        </li>
+      {% empty %}
+        <li>No products found.</li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

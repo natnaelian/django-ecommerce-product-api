@@ -1,15 +1,21 @@
 # products/permissions.py
 from rest_framework import permissions
 
+
 class IsAdminOrReadOnly(permissions.BasePermission):
     """
-    Custom permission to allow only admin users to create, edit, or delete products.
-    Everyone else can view (GET, HEAD, OPTIONS) only.
+    Read-only for everyone (GET, HEAD, OPTIONS).
+    Write access (POST, PUT, PATCH, DELETE) limited to authenticated staff/admin users.
     """
 
     def has_permission(self, request, view):
-        # SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS']
         if request.method in permissions.SAFE_METHODS:
             return True
-        # Allow only staff/admin users for POST, PUT, DELETE
-        return request.user and request.user.is_staff
+        user = request.user
+        return bool(user and user.is_authenticated and user.is_staff)
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        user = request.user
+        return bool(user and user.is_authenticated and user.is_staff)

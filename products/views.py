@@ -1,9 +1,10 @@
 # products/views.py
+from django.shortcuts import render, get_object_or_404
 from rest_framework import generics, permissions, filters
+
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
 from .permissions import IsAdminOrReadOnly
-from django.shortcuts import render
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
@@ -13,10 +14,13 @@ class ProductListCreateView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAdminOrReadOnly]
     queryset = Product.objects.all()
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name', 'category__name']
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["name", "category__name"]
+    ordering_fields = ["created_at", "price", "name"]
+    ordering = ["-created_at"]
 
     def perform_create(self, serializer):
+        # created_by enforced by serializer too; pass explicitly for clarity
         serializer.save(created_by=self.request.user)
 
 
@@ -37,24 +41,23 @@ class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     permission_classes = [IsAdminOrReadOnly]
 
+
+# Server-rendered templates (optional)
 def product_list_view(request):
     products = Product.objects.all()
     return render(request, "products/product_list.html", {"products": products})
 
 
-# 🔍 Product Detail View
 def product_detail_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, "products/product_detail.html", {"product": product})
 
 
-# 🧭 Category Filter View
 def category_filter_view(request, category_name):
-    category = get_object_or_404(Category, name=category_name)
+    category = get_object_or_404(Category, name__iexact=category_name.strip())
     products = Product.objects.filter(category=category)
-    categories = Category.objects.all()
     return render(
         request,
         "products/category_filter.html",
-        {"category": category, "products": products, "categories": categories}
+        {"category": category, "products": products},
     )
