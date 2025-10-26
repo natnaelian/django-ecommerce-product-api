@@ -1,1 +1,16 @@
-__pycache__/\n*.pyc\n*.env\nvenv/\ndb.sqlite3\n
+# venv
+.venv/
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+# Django
+db.sqlite3
+media/
+staticfiles/
+# Env
+.env
+# OS/editor
+.DS_Store
+*.log
