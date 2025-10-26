@@ -29,12 +29,29 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "corsheaders",
-    "rest_framework_simplejwt.token_blacklist",  # enable JWT blacklist for logout
-
+    "rest_framework_simplejwt.token_blacklist",  # ensure blacklist for /logout
     "users",
     "products",
 ]
 
+# Respect Render external URL for hosts and CSRF
+RENDER_EXTERNAL_URL = os.environ.get("RENDER_EXTERNAL_URL")
+if RENDER_EXTERNAL_URL:
+    host = RENDER_EXTERNAL_URL.replace("https://", "").replace("http://", "")
+    if host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(host)
+    CSRF_TRUSTED_ORIGINS = list(set([
+        *(locals().get("CSRF_TRUSTED_ORIGINS", []) or []),
+        RENDER_EXTERNAL_URL,
+        "https://*.onrender.com",
+    ]))
+
+# Ensure secure proxies/headers on Render
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+
+# Middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
